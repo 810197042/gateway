@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:  #允许哪些网站或域名跨域
+              - "http://localhost:8090"
+            allowedMethods:
+              - "GET"
+              - "POST"
+              - "DELETE"
+              - "PUT"
+              - "OPTIONS"
+            allowedHeaders: #允许在请求头中携带的信息
+              - "*"
+            allowCredentials: true    #允许携带cookie
+            maxAge: 360000
+      routes:
+        - id: movie-service
+          uri: lb://movieservice
+          predicates:
+            - Path=/movie/**
+        - id: user-service
+          uri: lb://userservice
+          predicates:
+            - Path=/user/**
+          filters:
+            - AddRequestHeader=Truth,izicnzxc #key,value 在请求参数上添加@RequestHead("Truth", required=false)
+      default-filters:
+        - AddRequestHeader=Truth,izicnzxc   #对所有路由都生效
+    nacos:
+      discovery:
+        server-addr: 124.220.35.53:8848
+
+server:
+  port: 10010
+
